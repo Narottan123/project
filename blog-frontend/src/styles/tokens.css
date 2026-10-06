@@ -1,0 +1,79 @@
+/**
+ * CRM Design System Tokens
+ * Clean, standard CRM theme matching pixel-e-office
+ */
+
+:root {
+  /* CRM Signature Primary (Pixel Orange) */
+  --primary_Color: #ff6c0a;
+  --color-primary: #ff6c0a;
+  --color-primary-hover: #e65900;
+  --color-primary-active: #cc4f00;
+  --color-primary-subtle: #fff4eb;
+  --color-primary-border: #fed7aa;
+
+  /* CRM Background & Surface */
+  --bg: #f5f7fb;
+  --color-bg: #f5f7fb;
+  --white: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f9fafb;
+  --color-surface-subtle: #f3f4f6;
+
+  /* Borders & Dividers */
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f3f4f6;
+  --color-border-strong: #d1d5db;
+  --color-border-focus: #ff6c0a;
+
+  /* Typography */
+  --color-text-main: #111827;
+  --color-text-body: #374151;
+  --muted: #6b7280;
+  --color-text-muted: #6b7280;
+  --color-text-subtle: #9ca3af;
+  --color-text-inverse: #ffffff;
+
+  /* Semantic Feedback */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Typography Font Stack */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Elevation & Shadows */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08);
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.2s ease-in-out;
+
+  /* Backward Compatibility Aliases */
+  --blog-font: var(--font-sans);
+  --blog-primary: var(--color-primary);
+  --blog-primary-hover: var(--color-primary-hover);
+  --blog-secondary: #6b7280;
+  --blog-accent: var(--color-success);
+  --blog-danger: var(--color-danger);
+  --blog-warning: var(--color-warning);
+  --blog-dark: var(--color-text-main);
+  --blog-card-bg: var(--color-surface);
+  --blog-bg: var(--color-bg);
+  --blog-border: var(--color-border);
+  --blog-text: var(--color-text-main);
+  --blog-muted: var(--color-text-muted);
+  --blog-shadow-sm: var(--shadow-sm);
+  --blog-shadow: var(--shadow-md);
+  --blog-shadow-lg: var(--shadow-lg);
+  --blog-radius: var(--radius-md);
+}

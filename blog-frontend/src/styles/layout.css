@@ -1,0 +1,99 @@
+/**
+ * CRM Layout Styles
+ * Clean, standard layout matching pixel-e-office
+ */
+
+/* Navbar */
+.blog-nav,
+.app-navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.blog-nav-brand,
+.app-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--primary_Color);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background-color: var(--primary_Color);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.blog-nav-link {
+  color: #4b5563;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.blog-nav-link:hover {
+  color: var(--primary_Color);
+  background-color: var(--color-primary-subtle);
+}
+
+.blog-nav-link.active {
+  color: var(--primary_Color);
+  font-weight: 600;
+  background-color: var(--color-primary-subtle);
+}
+
+/* Page Header */
+.blog-hero {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  padding: 32px 0 28px;
+  margin-bottom: 28px;
+}
+
+.blog-hero-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.blog-hero-desc {
+  max-width: 600px;
+  margin: 0 auto 20px;
+  font-size: 0.975rem;
+  color: #6b7280;
+}
+
+/* Footer */
+.app-footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+  padding: 36px 0 24px;
+}
+
+.footer-link {
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}
+
+.footer-link:hover {
+  color: var(--primary_Color);
+}

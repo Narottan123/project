@@ -1,0 +1,66 @@
+/**
+ * DevBlog - Page-Specific Components & Responsive Utilities
+ * Extends the modular design tokens in tokens.css
+ */
+
+/* Post Grid */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Post Reading Page Details */
+.post-detail-cover {
+  width: 100%;
+  max-height: 440px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.post-content-body {
+  font-size: 1.075rem;
+  line-height: 1.8;
+  color: var(--color-text-body);
+}
+
+.post-content-body p {
+  margin-bottom: 1.5rem;
+}
+
+.post-content-body h2,
+.post-content-body h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.post-content-body blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Author Header */
+.author-meta-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin: 20px 0 28px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .blog-hero-title {
+    font-size: 2rem;
+  }
+  
+  .auth-card {
+    padding: 24px 16px;
+  }
+}

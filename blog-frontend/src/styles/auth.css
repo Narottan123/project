@@ -1,0 +1,103 @@
+/**
+ * CRM Authentication Views Styles
+ * Matching pixel-e-office login style
+ */
+
+.auth-container {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  background-color: var(--bg);
+}
+
+.auth-card-wrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: var(--primary_Color);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(255, 108, 10, 0.25);
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.auth-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.auth-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.auth-social-btn:hover {
+  background-color: var(--color-primary-subtle);
+  border-color: var(--primary_Color);
+  color: var(--primary_Color);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.auth-divider-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.auth-divider-text {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
