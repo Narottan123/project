@@ -15,16 +15,12 @@ class CommentController extends BaseController {
 
       const result = await CommentService.getCommentsByPost(postId, { page, limit });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.comments,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
-        "Comments retrieved successfully"
+        result,
+        "Comments retrieved successfully",
+        { topLevelTotal: result.topLevelTotal }
       );
     } catch (error) {
       next(error);
@@ -38,18 +34,20 @@ class CommentController extends BaseController {
     try {
       const { postId } = req.params;
       const authorId = req.user.id || req.user._id;
-      const { content } = req.body;
+      const { content, parentId, replyToUser } = req.body;
 
       const comment = await CommentService.createComment({
         postId,
         authorId,
         content,
+        parentId: parentId || null,
+        replyToUser: replyToUser || null,
       });
 
       ActivityLogService.logActivity({
         user: req.user,
-        action: "CREATE_COMMENT",
-        details: { postId, commentId: comment._id },
+        action: parentId ? "REPLY_COMMENT" : "CREATE_COMMENT",
+        details: { postId, commentId: comment._id, parentId: comment.parentId },
         req,
       });
 
@@ -57,14 +55,35 @@ class CommentController extends BaseController {
       try {
         if (notificationIo?.io) {
           const post = await PostService.getPostById(postId);
+
+          // Emit to post room for dynamic live hierarchy placement
           notificationIo.io.emit(`new_comment_${postId}`, {
             comment,
             postId,
+            parentId: comment.parentId,
           });
+
+          // Targeted alert if someone replied to another user's comment
+          if (
+            comment.replyToUser &&
+            (comment.replyToUser._id || comment.replyToUser).toString() !== authorId.toString()
+          ) {
+            notificationIo.sendNotificationToUser(
+              comment.replyToUser._id || comment.replyToUser,
+              {
+                type: "COMMENT_REPLY",
+                message: `${req.user.name} replied to your comment on "${post.title}"`,
+                postId,
+                comment,
+              }
+            );
+          }
 
           // Also emit general notification
           notificationIo.io.emit("new_comment", {
-            message: `${req.user.name} commented on "${post.title}"`,
+            message: parentId
+              ? `${req.user.name} replied on "${post.title}"`
+              : `${req.user.name} commented on "${post.title}"`,
             postId,
             comment,
           });
@@ -75,7 +94,7 @@ class CommentController extends BaseController {
 
       return res.status(201).json({
         success: true,
-        message: "Comment added successfully",
+        message: parentId ? "Reply posted successfully" : "Comment added successfully",
         data: comment,
       });
     } catch (error) {

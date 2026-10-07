@@ -66,9 +66,85 @@ export const createExcerpt = (content = "", length = 160) => {
   return plain.substring(0, length) + "...";
 };
 
+/**
+ * Standardized reusable paginated JSON response
+ * @param {Object} res
+ * @param {Array|Object} data
+ * @param {Object|String} pagination
+ * @param {String} message
+ * @param {Object} extraMeta
+ */
+export const successWithPagination = (
+  res,
+  data,
+  pagination = {},
+  message = "Data retrieved successfully",
+  extraMeta = {}
+) => {
+  let list = [];
+  let pageMeta = {};
+  let successMessage = message;
+  let extraData = extraMeta;
+
+  if (typeof pagination === "string") {
+    successMessage = pagination;
+    pageMeta = {};
+  } else if (typeof pagination === "object" && pagination !== null) {
+    pageMeta = pagination;
+  }
+
+  if (Array.isArray(data)) {
+    list = data;
+  } else if (data && typeof data === "object") {
+    const arrayKey = ["users", "posts", "comments", "logs", "roles", "items", "data", "list"].find(
+      (key) => Array.isArray(data[key])
+    );
+    if (arrayKey) {
+      list = data[arrayKey];
+      pageMeta = { ...data, ...pageMeta };
+    } else {
+      list = [];
+    }
+  }
+
+  const total = Number(
+    pageMeta.total ?? pageMeta.totalItems ?? pageMeta.count ?? list.length
+  );
+  const page = Math.max(1, Number(pageMeta.page ?? pageMeta.currentPage ?? 1));
+  const limit = Math.max(
+    1,
+    Number(pageMeta.limit ?? pageMeta.perPage ?? (list.length || 10))
+  );
+  const totalPages = Number(
+    pageMeta.totalPages ?? (total > 0 ? Math.ceil(total / limit) : 1)
+  );
+  const hasNextPage = Boolean(pageMeta.hasNextPage ?? page < totalPages);
+  const hasPrevPage = Boolean(pageMeta.hasPrevPage ?? page > 1);
+
+  const extra = {
+    total,
+    page,
+    limit,
+    totalPages,
+    hasNextPage,
+    hasPrevPage,
+    ...extraData,
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: successMessage,
+    status_code: 200,
+    data: list,
+    extra,
+  });
+};
+
 export default {
   slugify,
   getPaginationData,
   isValidObjectId,
   createExcerpt,
+  successWithPagination,
 };
+

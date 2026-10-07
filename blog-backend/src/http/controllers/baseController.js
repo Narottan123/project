@@ -83,136 +83,78 @@ class BaseController {
    * @param {Object} res
    * @param {Array} data
    */
-  // successWithPagination(res, data) {
-  //   if (!Array.isArray(data)) {
-  //     return this.error(res, { message: "Data should be an array" });
-  //   }
+  /**
+   * Return paginated success response
+   *
+   * @param {Object} res - Express response object
+   * @param {Array|Object} data - Array of records OR result object containing data and pagination
+   * @param {Object|String} pagination - Pagination metadata { total, page, limit, totalPages } OR message if data contains metadata
+   * @param {String} message - Response message
+   * @param {Object} extraMeta - Additional metadata to append to extra
+   *
+   * @returns JSON response
+   */
+  successWithPagination(res, data, pagination = {}, message = "Data retrieved successfully", extraMeta = {}) {
+    let list = [];
+    let pageMeta = {};
+    let successMessage = message;
+    let extraData = extraMeta;
 
-
-  //   let responseData = data;
-
-  //   let count = 0;
-  //   let page = 0;
-  //   let limit = 0;
-  //   if (Object.keys(responseData.totalCount).length > 0) {
-  //     count = responseData.totalCount[0].count;
-  //     page = parseInt(responseData.totalCount[0].page);
-  //     limit =
-  //       parseInt(responseData.totalCount[0].limit) > 0
-  //         ? parseInt(responseData.totalCount[0].limit)
-  //         : Configuration.limit;
-  //   }
-  //   let extra = {
-  //     count: count,
-  //     limit: limit > 0 ? limit : Configuration.limit,
-  //     totalPages: Math.ceil(count / limit),
-  //     page: page,
-  //   };
-  //   if (responseData.totalCount[0]?.alias_name) {
-  //     extra.alias_name = responseData.totalCount[0].alias_name;
-  //   }
-
-  //   if (responseData.totalCount[0]?.name) {
-  //     extra.name = responseData.totalCount[0].name;
-  //   }
-  //   if (responseData.totalCount[0]?.deal_status) {
-  //     extra.deal_status = responseData.totalCount[0].deal_status;
-  //   }
-  //   return this.success(res, responseData, extra);
-  // }
-
-  successWithPagination(res, data) {
-  if (!Array.isArray(data)) {
-    return this.error(res, { message: "Data should be an array" });
-  }
-
-  let responseData = data;
-
-  let count = 0;
-  let page = 0;
-  let limit = 0;
-  
-  if (responseData.totalCount && Object.keys(responseData.totalCount).length > 0) {
-    count = responseData.totalCount[0].count;
-    page = parseInt(responseData.totalCount[0].page);
-    limit =
-      parseInt(responseData.totalCount[0].limit) > 0
-        ? parseInt(responseData.totalCount[0].limit)
-        : Configuration.limit;
-  }
-
-  let extra = {
-    count: count,
-    limit: limit > 0 ? limit : Configuration.limit,
-    totalPages: Math.ceil(count / limit),
-    page: page,
-  };
-
-  // --- Dynamic Dashboard Meta Property Extraction Block ---
-  if (responseData.totalCount && responseData.totalCount[0]) {
-    const targetMeta = responseData.totalCount[0];
-
-    if (targetMeta.alias_name) {
-      extra.alias_name = targetMeta.alias_name;
-    }
-    if (targetMeta.name) {
-      extra.name = targetMeta.name;
-    }
-    if (targetMeta.deal_status) {
-      extra.deal_status = targetMeta.deal_status;
-    }
-    
-    // Natively extract progress tracking dashboard metrics safely
-    if (targetMeta.title) {
-      extra.title = targetMeta.title;
-    }
-    if (targetMeta.summary_cards) {
-      extra.summary_cards = targetMeta.summary_cards;
-    }
-    if (targetMeta.recent_activities) {
-      extra.recent_activities = targetMeta.recent_activities;
-    }
-  }
-
-  return this.success(res, responseData, extra);
-}
-
-  successWithPagination1(res, data) {
-    if (!Array.isArray(data)) {
-      return this.error(res, { message: "Data should be an array" });
+    // Handle flexible argument order: if 3rd arg is string, treat as message
+    if (typeof pagination === "string") {
+      successMessage = pagination;
+      pageMeta = {};
+    } else if (typeof pagination === "object" && pagination !== null) {
+      pageMeta = pagination;
     }
 
-
-    let responseData = data;
-    let count = 0;
-    let page = 0;
-    let limit = 0;
-    let ownFolders = 0;
-    let ownFiles = 0;
-    let sharedFolders = 0;
-    if (Object.keys(responseData.totalCount).length > 0) {
-      count = responseData.totalCount[0].count;
-      page = parseInt(responseData.totalCount[0].page);
-      limit =
-        parseInt(responseData.totalCount[0].limit) > 0
-          ? parseInt(responseData.totalCount[0].limit)
-          : Configuration.limit;
-      ownFolders = responseData.totalCount[0].ownFolders || 0;
-      ownFiles = responseData.totalCount[0].ownFiles || 0;
-      sharedFolders = responseData.totalCount[0].sharedFolders || 0;
+    // Extract list and meta if data is a result object (e.g., { users, total, page, limit })
+    if (Array.isArray(data)) {
+      list = data;
+    } else if (data && typeof data === "object") {
+      const arrayKey = ["users", "posts", "comments", "logs", "roles", "items", "data", "list"].find(
+        (key) => Array.isArray(data[key])
+      );
+      if (arrayKey) {
+        list = data[arrayKey];
+        pageMeta = { ...data, ...pageMeta };
+      } else {
+        list = [];
+      }
     }
-    let extra = {
-      count: count,
-      ownFolders: ownFolders, //  added
-      ownFiles: ownFiles, //  added
-      sharedFolders: sharedFolders,
-      limit: limit > 0 ? limit : Configuration.limit,
-      totalPages: Math.ceil(count / limit),
-      page: page,
-      price: responseData.price,
+
+    const total = Number(
+      pageMeta.total ?? pageMeta.totalItems ?? pageMeta.count ?? list.length
+    );
+    const page = Math.max(
+      1,
+      Number(pageMeta.page ?? pageMeta.currentPage ?? 1)
+    );
+    const limit = Math.max(
+      1,
+      Number(pageMeta.limit ?? pageMeta.perPage ?? (list.length || 10))
+    );
+    const totalPages = Number(
+      pageMeta.totalPages ?? (total > 0 ? Math.ceil(total / limit) : 1)
+    );
+    const hasNextPage = Boolean(
+      pageMeta.hasNextPage ?? (page < totalPages)
+    );
+    const hasPrevPage = Boolean(
+      pageMeta.hasPrevPage ?? (page > 1)
+    );
+
+    const extra = {
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      ...extraData,
     };
 
-    return this.success(res, responseData, extra);
+    return this.success(res, list, extra, successMessage);
   }
 
   readHTMLFile(path) {

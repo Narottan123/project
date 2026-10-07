@@ -20,6 +20,23 @@ const commentSchema = new mongoose.Schema(
       trim: true,
       maxlength: 1000,
     },
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+      index: true,
+    },
+    replyToUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    depth: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 10,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -32,10 +49,13 @@ const commentSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
 commentSchema.index({ post: 1, isDeleted: 1, createdAt: -1 });
+commentSchema.index({ post: 1, parentId: 1, isDeleted: 1 });
 
 const Comment = mongoose.model("Comment", commentSchema);
 

@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { postsApi } from "@/service/api";
 import PostCard from "@/components/blog/PostCard";
-import { FiSearch, FiEdit, FiTrendingUp, FiFilter } from "react-icons/fi";
+import CategoryFilter from "@/components/blog/CategoryFilter";
+import Pagination from "@/components/common/Pagination";
+import EmptyState from "@/components/common/EmptyState";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { FiSearch, FiFileText } from "react-icons/fi";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -21,7 +24,7 @@ export default function HomePage() {
       setLoading(true);
       const params = {
         page,
-        limit: 9,
+        limit: 10,
         category: selectedCategory !== "All" ? selectedCategory : undefined,
         search: searchTerm.trim() || undefined,
       };
@@ -65,9 +68,15 @@ export default function HomePage() {
     fetchPosts();
   };
 
+  const handleResetFilters = () => {
+    setSelectedCategory("All");
+    setSearchTerm("");
+    setPage(1);
+  };
+
   return (
     <div>
-      {/* Page Header */}
+      {/* Hero / Header Bar */}
       <div className="bg-white border-bottom py-4 mb-4">
         <div className="container">
           <div className="row align-items-center justify-content-between">
@@ -102,64 +111,36 @@ export default function HomePage() {
 
       {/* Main Content Area */}
       <div className="container pb-5">
-        {/* Category Filter & Count */}
-        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4 pb-3 border-bottom">
-          <div className="d-flex align-items-center gap-2 overflow-x-auto py-1">
-            <span className="text-muted d-flex align-items-center gap-1 me-1" style={{ fontSize: "13px" }}>
-              <FiFilter /> Category:
-            </span>
-            {categories.map((cat, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setPage(1);
-                }}
-                className={`btn btn-sm ${
-                  selectedCategory === cat
-                    ? "btn-primary"
-                    : "btn-outline-secondary"
-                }`}
-                style={{ fontSize: "13px" }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        {/* Category Filters */}
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={(cat) => {
+            setSelectedCategory(cat);
+            setPage(1);
+          }}
+          currentCount={posts.length}
+          totalCount={totalPosts}
+        />
 
-          <div className="text-muted" style={{ fontSize: "13px" }}>
-            Showing <strong>{posts.length}</strong> of <strong>{totalPosts}</strong> posts
-          </div>
-        </div>
-
-        {/* Post Grid */}
+        {/* Post Grid or States */}
         {loading ? (
-          <div className="row g-4 justify-content-center py-5">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="col-lg-4 col-md-6">
-                <div className="blog-card p-4 text-center">
-                  <div className="spinner-border text-primary my-5" role="status" />
-                  <p className="text-muted">Loading latest articles...</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <LoadingSpinner message="Loading latest articles..." minHeight="30vh" />
         ) : posts.length === 0 ? (
-          <div className="text-center py-5 my-4">
-            <h4 className="fw-bold text-muted mb-2">No articles found</h4>
-            <p className="text-muted mb-4">Try clearing filters or search terms.</p>
-            <button
-              onClick={() => {
-                setSelectedCategory("All");
-                setSearchTerm("");
-                setPage(1);
-              }}
-              className="blog-btn-outline"
-            >
-              Reset Filters
-            </button>
-          </div>
+          <EmptyState
+            icon={<FiFileText size={48} />}
+            title="No articles found"
+            description="Try clearing filters or search terms to see more articles."
+            action={
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="blog-btn-outline"
+              >
+                Reset Filters
+              </button>
+            }
+          />
         ) : (
           <div className="row g-4">
             {posts.map((post) => (
@@ -169,29 +150,13 @@ export default function HomePage() {
         )}
 
         {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="d-flex justify-content-center align-items-center gap-2 mt-5">
-            <button
-              className="btn btn-outline-secondary px-3 py-1 rounded-pill"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              style={{ fontSize: "13px" }}
-            >
-              &larr; Previous
-            </button>
-            <span className="px-3 text-muted" style={{ fontSize: "13px" }}>
-              Page {page} of {totalPages}
-            </span>
-            <button
-              className="btn btn-outline-secondary px-3 py-1 rounded-pill"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              style={{ fontSize: "13px" }}
-            >
-              Next &rarr;
-            </button>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={totalPosts}
+          limit={10}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
       </div>
     </div>
   );

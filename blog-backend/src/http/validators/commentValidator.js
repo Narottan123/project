@@ -7,7 +7,9 @@ export const createCommentSchema = Joi.object({
     "string.max": "Comment cannot exceed 1000 characters",
     "any.required": "Comment content is required",
   }),
-  postId: Joi.string().optional(),
+  postId: Joi.string().allow("", null).optional(),
+  parentId: Joi.string().allow("", null).optional(),
+  replyToUser: Joi.string().allow("", null).optional(),
 });
 
 export const updateCommentSchema = Joi.object({

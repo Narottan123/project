@@ -21,15 +21,10 @@ class PostController extends BaseController {
         includeDeleted: false,
       });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.posts,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
+        result,
         "Posts retrieved successfully"
       );
     } catch (error) {
@@ -79,15 +74,10 @@ class PostController extends BaseController {
         includeDeleted: false,
       });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.posts,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
+        result,
         "User posts retrieved successfully"
       );
     } catch (error) {

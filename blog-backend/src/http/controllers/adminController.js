@@ -25,15 +25,10 @@ class AdminController extends BaseController {
       const { page, limit, search, role } = req.query;
       const result = await AdminService.getUsers({ page, limit, search, role });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.users,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
+        result,
         "Users retrieved successfully"
       );
     } catch (error) {
@@ -91,16 +86,11 @@ class AdminController extends BaseController {
       const { page, limit, search, status, isDeleted } = req.query;
       const result = await AdminService.getAdminPosts({ page, limit, search, status, isDeleted });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.posts,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
-        "Admin posts retrieved"
+        result,
+        "Admin posts retrieved successfully"
       );
     } catch (error) {
       next(error);
@@ -157,15 +147,10 @@ class AdminController extends BaseController {
       const { page, limit } = req.query;
       const result = await AdminService.getAdminComments({ page, limit });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.comments,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
+        result,
         "Comments retrieved for moderation"
       );
     } catch (error) {
@@ -202,16 +187,11 @@ class AdminController extends BaseController {
       const { page, limit, action, userId } = req.query;
       const result = await ActivityLogService.getLogs({ page, limit, action, userId });
 
-      return this.success(
+      return this.successWithPagination(
         res,
         result.logs,
-        {
-          total: result.total,
-          page: result.page,
-          limit: result.limit,
-          totalPages: result.totalPages,
-        },
-        "Activity logs retrieved"
+        result,
+        "Activity logs retrieved successfully"
       );
     } catch (error) {
       next(error);
