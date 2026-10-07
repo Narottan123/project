@@ -189,9 +189,10 @@ router.get("/google/callback", async (req, res) => {
 router.get("/facebook", (req, res) => {
   const redirectUri = `${req.protocol}://${req.get("host")}/api/v1/auth/facebook/callback`;
   const appId = process.env.FACEBOOK_APP_ID || "123456789012345";
+  const scope = req.query.scope || "public_profile";
   const fbAuthUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(
     redirectUri
-  )}&scope=email,public_profile`;
+  )}&scope=${encodeURIComponent(scope)}`;
 
   return res.redirect(fbAuthUrl);
 });
